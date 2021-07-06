@@ -22,6 +22,19 @@ class ToDoList extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  componentDidMount() {
+    fetch("https://altcademy-to-do-list-api.herokuapp.com/tasks?api_key=112")
+      .then(checkStatus)
+      .then(json)
+      .then((response) => {
+        console.log(response);
+        this.setState({ tasks: response.tasks });
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  }
+
   handleChange(event) {
     this.setState({ new_task: event.target.value });
   }
@@ -40,7 +53,7 @@ class ToDoList extends React.Component {
             <h2 className="mb-3 text-center">To Do List</h2>
             {tasks.length > 0 ? (
               tasks.map((tasks) => {
-                return null;
+                return <Task key={task.id} task={task} />;
               })
             ) : (
               <p>No tasks here</p>
@@ -59,6 +72,26 @@ class ToDoList extends React.Component {
             </form>
           </div>
         </div>
+      </div>
+    );
+  }
+}
+
+class Task extends React.Component {
+  render() {
+    const { task, onDelete, onComplete } = this.props;
+    const { id, content, completed } = task;
+
+    return (
+      <div className="row mb-1">
+        <p className="col">{content}</p>
+        <button onClick={() => onDelete(id)}>Delete</button>
+        <input
+          className="d-inline-block mt-2"
+          type="checkbox"
+          onChange={() => onComplete(id, completed)}
+          checked={completed}
+        />
       </div>
     );
   }
