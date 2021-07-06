@@ -20,10 +20,16 @@ class ToDoList extends React.Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.fetchTasks = this.fetchTasks.bind(this);
+    this.deleteTask = this.deleteTask.bind(this);
   }
 
   componentDidMount() {
-    fetch("https://altcademy-to-do-list-api.herokuapp.com/tasks?api_key=112")
+    this.fetchTasks(); //get tasks on mount
+  }
+
+  fetchTasks() {
+    fetch("https://altcademy-to-do-list-api.herokuapp.com/tasks?api_key=108")
       .then(checkStatus)
       .then(json)
       .then((response) => {
@@ -41,6 +47,56 @@ class ToDoList extends React.Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    //make a new task
+    let { new_task } = this.state; //destructuring
+    new_task = new_task.trim();
+    if (!new_task) {
+      return; //early return
+    }
+
+    fetch("https://altcademy-to-do-list-api.herokuapp.com/tasks?api_key=108", {
+      method: "POST",
+      mode: "cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        task: {
+          content: new_task,
+        },
+      }),
+    })
+      .then(checkStatus)
+      .then(json)
+      .then((data) => {
+        this.setState({ new_task: "" });
+        this.fetchTasks();
+      })
+      .catch((error) => {
+        this.setState({ error: error.message });
+        console.log(error);
+      });
+  }
+
+  deleteTask(id) {
+    if (!id) {
+      return; //if no id, then early return
+    }
+
+    fetch(
+      `https://altcademy-to-do-list-api.herokuapp.com/tasks/${id}?api_key=108`,
+      {
+        method: "DELETE",
+        mode: "cors",
+      }
+    )
+      .then(checkStatus)
+      .then(json)
+      .then((data) => {
+        this.fetchTasks(); //fetch tasks after delete
+      })
+      .catch((error) => {
+        this.setState({ error: error.message });
+        console.log(error);
+      });
   }
 
   render() {
@@ -52,8 +108,10 @@ class ToDoList extends React.Component {
           <div className="col-12">
             <h2 className="mb-3 text-center">To Do List</h2>
             {tasks.length > 0 ? (
-              tasks.map((tasks) => {
-                return <Task key={task.id} task={task} />;
+              tasks.map((task) => {
+                return (
+                  <Task key={task.id} task={task} onDelete={this.deleteTask} />
+                );
               })
             ) : (
               <p>No tasks here</p>
