@@ -1,0 +1,24 @@
+.row-wrapper {
+  box-shadow: 0 6px 20px rgb(0 0 0 / 20%);
+  border-radius: 12px;
+}
+body {
+  background-color: rgb(249, 245, 241) !important;
+}
+.row {
+  background-color: #fffefc;
+}
+.wrapper-two {
+  box-shadow: 0 6px 20px rgb(0 0 0 / 20%);
+}
+.rounded-circle {
+  font-size: 30px;
+}
+.remove-item {
+  float: right;
+  color: grey;
+}
+.selected {
+  border-color: rgba(0, 0, 0, 0.2) !important;
+  border-width: 0.15rem !important;
+}
