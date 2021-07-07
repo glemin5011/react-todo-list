@@ -172,7 +172,7 @@ class ToDoList extends React.Component {
               <input
                 type="text"
                 className="form-control mr-sm-2 mb-2"
-                placeholder="new task"
+                placeholder="New task"
                 value={new_task}
                 onChange={this.handleChange}
               />
